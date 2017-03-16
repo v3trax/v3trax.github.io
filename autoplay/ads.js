@@ -46,6 +46,8 @@ function setUpIMA() {
 
   adsRequest.nonLinearAdSlotWidth = 640;
   adsRequest.nonLinearAdSlotHeight = 150;
+    
+    adsRequest.setAdWillAutoPlay(true);
 
   adsLoader.requestAds(adsRequest);
 }
@@ -83,6 +85,7 @@ function onAdsManagerLoaded(adsManagerLoadedEvent) {
   adsManager = adsManagerLoadedEvent.getAdsManager(
       videoContent, adsRenderingSettings);
 
+    
   // Add listeners to the required events.
   adsManager.addEventListener(
       google.ima.AdErrorEvent.Type.AD_ERROR,
