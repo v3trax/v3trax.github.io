@@ -15,6 +15,7 @@ function init() {
   playButton = document.getElementById('playButton');
   playButton.addEventListener('click', playAds);
   setUpIMA();
+    setTimeout(playAds, 3000);
 }
 
 function setUpIMA() {
@@ -110,7 +111,6 @@ function onAdsManagerLoaded(adsManagerLoadedEvent) {
   adsManager.addEventListener(
       google.ima.AdEvent.Type.COMPLETE,
       onAdEvent);
-    playAds();
 }
 
 function onAdEvent(adEvent) {
