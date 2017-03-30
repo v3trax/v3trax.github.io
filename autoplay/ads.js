@@ -125,7 +125,7 @@ function onAdEvent(adEvent) {
       if (!ad.isLinear()) {
         // Position AdDisplayContainer correctly for overlay.
         // Use ad.width and ad.height.
-        videoContent.play();
+//        videoContent.play();
       }
       break;
     case google.ima.AdEvent.Type.STARTED:
