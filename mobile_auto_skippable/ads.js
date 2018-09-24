@@ -7,16 +7,11 @@ var adsManager;
 var adsLoader;
 var adDisplayContainer;
 var intervalTimer;
-var playButton;
 var videoContent;
 
 function init() {
   videoContent = document.getElementById('contentElement');
-  playButton = document.getElementById('playButton');
-  playButton.addEventListener('click', playAds);
   setUpIMA();
-    playAds();
-//    setTimeout(playAds, 3000);
 }
 
 function setUpIMA() {
@@ -24,6 +19,7 @@ function setUpIMA() {
   createAdDisplayContainer();
   // Create ads loader.
   adsLoader = new google.ima.AdsLoader(adDisplayContainer);
+  adsLoader.getSettings().setDisableCustomPlaybackForIOS10Plus(true);
   // Listen and respond to ads loaded and error events.
   adsLoader.addEventListener(
       google.ima.AdsManagerLoadedEvent.Type.ADS_MANAGER_LOADED,
@@ -34,12 +30,18 @@ function setUpIMA() {
       onAdError,
       false);
 
+  // An event listener to tell the SDK that our content video
+  // is completed so the SDK can play any post-roll ads.
+  var contentEndedListener = function() {adsLoader.contentComplete();};
+  videoContent.onended = contentEndedListener;
+
   // Request video ads.
   var adsRequest = new google.ima.AdsRequest();
   adsRequest.adTagUrl = 'https://pubads.g.doubleclick.net/gampad/ads?' +
       'sz=640x480&iu=/124319096/external/single_ad_samples&ciu_szs=300x250&' +
       'impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&' +
-      'cust_params=deployment%3Ddevsite%26sample_ct%3Dlinear&correlator=';
+      'cust_params=deployment%3Ddevsite%26sample_ct%3Dskippablelinear&' +
+      'correlator=';
 
   // Specify the linear and nonlinear slot sizes. This helps the SDK to
   // select the correct creative if multiple are returned.
@@ -48,8 +50,6 @@ function setUpIMA() {
 
   adsRequest.nonLinearAdSlotWidth = 640;
   adsRequest.nonLinearAdSlotHeight = 150;
-    
-    adsRequest.setAdWillAutoPlay(true);
 
   adsLoader.requestAds(adsRequest);
 }
@@ -87,7 +87,6 @@ function onAdsManagerLoaded(adsManagerLoadedEvent) {
   adsManager = adsManagerLoadedEvent.getAdsManager(
       videoContent, adsRenderingSettings);
 
-    
   // Add listeners to the required events.
   adsManager.addEventListener(
       google.ima.AdErrorEvent.Type.AD_ERROR,
@@ -112,6 +111,8 @@ function onAdsManagerLoaded(adsManagerLoadedEvent) {
   adsManager.addEventListener(
       google.ima.AdEvent.Type.COMPLETE,
       onAdEvent);
+
+  playAds();
 }
 
 function onAdEvent(adEvent) {
